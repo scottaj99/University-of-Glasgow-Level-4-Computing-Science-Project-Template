@@ -15,7 +15,7 @@
 
 %==============================================================================
 %% METADATA
-\title{Programming Languages Translator} % change this to your title
+\title{Programming Language Translation} % change this to your title
 \author{Scott Johnston}
 \date{September 14, 2018}
 
@@ -132,7 +132,103 @@ The decision to focus on a translator between Java and Python ultimately came fr
 
 Python is a highly popular language for a number of reasons, most notably it is easy to read and write, it is an interpreted language, it is dynamically typed, and it possesses a rich base library and garbage collection feature. (https://python.land/python-tutorial/what-is-python) A paper by Fangohr detailed a comparison carried out between C, MATLAB and Python as teaching languages in engineering. This paper heavily supports that python has an easy-to-use syntax and highlights that python is here to stay in industry, due to it's intuitive nature. A paper titled "An Empirical Comparison of Seven Programming Languages" also mapped the advantages of python performance-wise using empirical data, as it performed amongst the best when put up against 6 other well known programming languages. This evidence of both strong performance and syntactical-ease are enough to justify the importance of Python, thus the decision to use it as the target language for the programming language translator was clear.
 
-According to Oracle, 3 billion devices run on Java. 
+According to Oracle, 3 billion devices run on Java. This proves it's popularity, probably due to it's many advantageous factors. One major factor being the embrace of object-oriented programming (OOP) in contrast to the procedural programming approach associated with a lot of other languages. Other advantages include Java's platform-independency, it's support for a plethora of libraries being appealing to enterprise computing and Java's support for common programming key issues such as multi-threading and automatic memory management. 
+Object-Oriented Programming is at the core of all Java programs, which is untrue for Python, despite having OOP capabilities. Java is restrictive and complex to design in comparison to the intuitive nature of python. Java is also statically typed (meaning that a variable's type must be defined), whilst Python is dynamically typed.
+
+Evidently both Python and Java are powerful and popular for a reason, justifying their place as two of the top languages in the programming world. The differences that have also been highlighted are areas which will make the translation process interesting and justifies that there is enough of a difference between the two languages to make a translation tool worthwhile.
+
+\section{Motivation}
+Whilst it is not believed that Python will replace Java, given the benefit of some python features highlighted in section 1.2.1, there is definitely an existing argument as to why people may choose to code in python. Aside from this, Python is also closely related to newly emerging fields in computing science such as the Internet of Things (IoT).
+
+In a 2019 article it was suggested by TIOBE that Python could overtake both Java and C to become the most popular programming language in the world. This was due to the "software engineering boom" which attracted newcomers to programming. To understand a simple program such as "hello world" a java user must understand classes, static methods and packages, whilst a C user is required to understand explicit memory management. A Python user however, simply must understand one single line.
+The article goes on to explain how Python is widely regarded the first programming language taught to university students, however not only due to it's simple high-level syntax. It is due to Python being the number one language in a number of different computing domains such as statistical, AI programming, scripting, system tests, web programming and scientific computing.
+
+Figure \ref{fig:index} shows the TIOBE Programming Community index from February 2021. This index is used as indicator of the popularity of programming languages. The ratings use popular search engines to calculate the ratings, and is based on the number of skilled engineers world-wide, courses and third-party vendors. The graphic clearly indicates the rise of Python and relative fall from Java (Despite still being number 2 in the overall rankings). This evidence benefits what was stated in the 2019 article about Python's rise in the next few years.
+
+This evidence combined makes Python a strong candidate to soon dominate the software market. This in turn could create the shift in many different industries from their current software (in a lot of cases a Java software) to one operated in Python. This could become a tedious job, and rewriting software in a new language from scratch would be both time consuming and expensive. Therefore, a mechanism that converts Java (a vastly popular programming language that is starting to wane) to Python (a language which is massively increasing in popularity) relatively accurately and automatically, could be imperative in the software development world in the near future. 
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{images/Programming Community Index.JPG}
+        \caption{TIOBE Programming Community Index from February 2021. Focus should be on the green line showing Python's strong growth between 2018-present. 
+    }
+    \label{fig:index} 
+\end{figure}
+
+\section{Research Questions}
+As briefly summarised in section 1.3, the overall goal was to try and create a tool which would convert a program written in Java to Python, without compromising accuracy or code quality. Aside from this overall goal, objectives were set out which were altered as the project went on to fit with what had been achieved. 
+
+Upon some background research which shall be touched upon in Section 2,  Program conversion process has been placed  among  the  top  10  challenges  in  the  programming  world (https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=895180), and the comparison of programming language conversion to "turning a sausage into a pig" from the same paper, shows that this was not going to be a straightforward task. A fully functioning translator with 100\% accuracy was not achievable given the time frame and skill level, and some would even argue impossible to ever have such a powerful translator. An example of why this is impossible could be a package with certain capabilities existing in Java but not in Python.
+
+Nevertheless, the following objectives were decided upon:
+\begin{itemize}
+    \item
+    1) Ensure simple/common coding paradigms can be translated (explanation below)
+    \item
+    2) Ensure the code is expandable for future work.
+    \item
+    3) Ensure through evaluation that translator is at least as good as what is on the market
+    \item
+    4) Keep translations as simple as possible 
+    \item
+    5)
+    \item
+    6)
+\end{itemize}
+
+For the sake of clarity here is a more thorough description of each objective.
+
+For objective \textbf{\#1}, consideration was taken into what is the most useful and common coding patterns used in Java that should be implemented into the translator. Given my own coding experience accompanied by W3Schools.com (which offers tutorials for beginners), these were selected as follows:
+
+Conditional statements in the form of if/else/ else if as well as logical conditions using mathematical symbols (e.g 'a>'b, 'a<b', 'a==b').
+
+Switch statements, which are a form of conditional statement to select a block of code that executes if a case is met (switch/case/default)
+
+While loops, and do/while loops where a block of code will be executed as long as a specified condition is reached.
+
+For loops, where the number of times code will be looped is specified, rather than a condition waiting to be met. Also for-each loops can be used when looping through elements in a list-type structure such as an array.
+
+Also included in this objective, would be converting the OOP structure required in Java into Python, Which meant creating classes and methods in the translation. This is not only good coding practice, but meant the code could be easily compared due to the shape remaining similar.
+
+The ANTLR grammar file used for translation was also imperative in finding what areas of the Java programming language to focus on. This file will be discussed later in the design phase of this thesis.
+
+Objective \textbf{\#2} was actually decided upon during my background research when looking for similar software tools that had been built. Whilst there was some helpful research, a lot of the tools were difficult to use any source code from, due to their unclear structure. 
+This meant that even if my translator was just to be a "proof of concept", the way in which it should be built is so that it is extendable, such that the 'future work' set out in this thesis could possibly be built using the framework I have managed to design so far.
+
+For Objective \textbf{\#3}, there was a few translator tools on the market that did a similar thing to what this was intended to do, and decided that for this to be a success, the evaluator should perform at least as well as what is currently on the market. This meant testing my tool with the java2python test folder that can be found at https://github.com/natural/java2python/tree/master/test and I intended for my evaluation to be a success if my tool converted all these tests with accuracy and perhaps could improve upon this tool through a comparison. This objective will be discussed further in the evaluation phase of this thesis.
+
+For Objective \textbf{\#4}, I did not want to make translation overly complicated. A philosophy adopted with this tool from early on was that if the translation can be simplified, it has not been fully successful. This idea came from my evaluation of other translation systems, as I felt some conversions, whilst able to compile and run successfully, the translation looked over complicated and thus, may be too indecipherable and very difficult to maintain and add features to.
+
+\section{Contributions}
+
+\section{Structure of Paper}
+
+\subsection{Methodology Summary}
+To create this tool I first of all researched the current market of programming language translators. Inspiration from these tools was taken, however they were also criticized for what they lacked, and what could have been improved upon.
+This helped lead to the design process, as the criteria was able to be laid down for exactly what was required of the translator.
+Once the functional requirements were laid out, research was undertaken to identify what software was available on the market which would offer this functionality. 
+Once ANTLR and StringTemplate were identified as reaching these requirements, GitHub was used to find any open source code which could be used for my project.
+Once this code was found, and I was familiar with how the software worked, I used this existing code to try and extend it to a translator.
+Evaluation was ongoing as I created the tool to ensure the objectives were stuck to closely.
+
+\subsection{What I have built}
+I have built a programming language translator tool using Java, and ANTLR and StringTemplate frameworks, which is able to translate from Java to Python. The tool is able to translate the majority of Java's in-built functionality to Python in the most minimalist form, so as not to confuse things and means the code is maintainable in the future. The way in which this tool has been built uses a Java Grammar from ANTLR's GitHub repository which I have extended slightly to add some functionality, and a StringTemplate file which was influenced by the StringTemplate GitHub however was primarily built from scratch. This technique of building was chosen due to it's extendability in the future, as this thesis will demonstrate how easily the tool could be expanded in future.
+
+\subsection{Thesis Outline}
+The rest of this paper is structured as follows:
+Chapter 2 analyses and critiques the current research in this field, and the current products on the market.
+Chapter 3 is a general summary of the method used to decide upon the criteria of the tool and it's evaluation.
+Chapter 4 is the analysis and the specification of what is required in a programming language translator.
+Chapter 5 details the design process of the translator before being built.
+Chapter 6 details the implementation of the translator and any setbacks faced in the building process.
+Chapter 7 will detail how the tool was evaluated and how well it performed in the evaluation process.
+Chapter 8 will then be the conclusion of the findings from this paper, reflection of the process,  and any future work that could take place in this field.
+
+
+
+
+
+
 
 \todo{Remove the guidance notes from your dissertation before submitting!}
 
