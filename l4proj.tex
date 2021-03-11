@@ -109,43 +109,61 @@ I would like to thank my supervisor Derek Somerville for his guidance and suppor
 % text in the final copy, and you will also get warnings when you compile (so you don't
 % forget to take them out!)
 
-\section{Background Brief}
+\section{Background}
+\subsection{Programming Language Translation}
+ Program conversion process has been placed  among  the  top  10  challenges  in  the  programming  world  (Terekhov, A. A., & Verhoef, C., (2000) "The realities of language conversions". IEEE  Software,  vol. 17, no. 6, pp. 111-124.) Whilst there exists many tools online to try such a thing, it is an area of research which is yet to be cracked. The motivation for such a tool is clearly there however, due to the amount of research that has been done into conversion tools. There has also been a number of discoveries made into how best to translate code, with a lot of experts agreeing on an intermediate layer between the two languages. This concept is fully explored by Coco, Osman and Osman in their paper "JPT: A Simple Java-Python Translator". This involved the use of an XML middle-layer to try and translate the basic principles of programming languages from Java into Python. As things stand, there are a multitude of translators on the market to and from the most popular programming languages about, however the process of re-engineering certain codes due to the uniqueness of different languages semantics and syntax, has meant that sophisticated code is difficult to convert. 
+ 
+\subsection{Java2Python}
+Java2Python is the most recognisable tool that is available, and holds similar abilities to the tool that this project intends to produce. Java2Python uses ANTLR to create an abstract syntax tree from the source code (java file) and walks the tree's nodes, converting each node to it's Python equivalent. This is a similar approach taken in this project, but with some key differences that will be discussed late in the design chapter. Java2Python exists in the Python Package Index (PyPi), meaning it has been recognised by Python themselves, as a useful package. It is described on their website as a tool to "imperfectly translate Java source code to Python source code". This imperfection will also be discussed later in the background chapter of this paper, including the fact it is outdated, it's clear limitations, and it's verbose nature causing confusion.
 \subsection{ANTLR and StringTemplate}
 The Programming Language translator is built primarily using the ANTLR framework along with stringTemplate.
-ANTLR stands for "Another Tool for Language Recognition". The framework uses a user-generated grammar file to generate a parser which can then be used for reading, processing, executing, or in this case, translating structured text files.
 
-StringTemplate is a java template engine which can be used to output source code.
+\subsubsection{ANTLR}
 
+ANTLR stands for "Another Tool for Language Recognition". The framework uses a user-generated grammar file to generate a parser which can then be used for reading, processing, executing, or in this case, translating structured text files. ANTLR was built in Java however has been developed to allow users to use this tool with any type of target language (for example, the Java2Python application built the backend in Python). ANTLR is widely used in academia and industry to build all sorts of tools, frameworks and languages, including the Twitter Search, for query parsing. This shows the power and reach the ANTLR tool has.
+
+\subsubsection{StringTemplate}
+StringTemplate is a java template engine which can be used to output source code. A template engine is a code generator that emits text using templates, which are essentially just text documents with spaces for attributes to be added. These attributes will be found via the parser generator (in this case ANTLR) which will direct the attributes to the correct template.
+\subsubsection{Combining ANTLR and StringTemplate}
 These two softwares collaborated nicely due to stringTemplate powering ANTLR, and justification for how and why they were used can be found in the design and implementation section of this thesis.
+To briefly explain it however, there is a Java grammar that exists in ANTLR, which is then parsed, essentially identifying nodes of attributes. These attributes are then fed into the Python StringTemplate to output Python source code. This approach was primarily inspired from the following document, explaining how the two combined to give a very simple translator:
+https://theantlrguy.atlassian.net/wiki/spaces/ST/pages/1409118/Language+Translation+Using+ANTLR+and+StringTemplate
 
 \subsection{Impact of COVID-19}
-The 2020-21 academic year has been gravely impacted by the ongoing global pandemic. This had an indirect yet significant affect on this honours project. Face-to-face communication has been extremely restricted throughout the year, meaning that meetings with my supervisor were limited to online calls via microsoft teams, which many would argue is harder to be engaged with.
+The 2020-21 academic year has been gravely impacted by the ongoing global pandemic. This had an indirect yet significant affect on this honours project. Face-to-face communication has been extremely restricted throughout the year, meaning that meetings with supervisors were limited to online calls via microsoft teams, which many would argue is harder to be engaged with.
 
-On top of this the pandemic situation was anxiety inducing, which many recent studies have proven has lead to students struggling with motivation towards their studies. The university did however regularly update students with advice on coping throughout these troubling times.
+On top of this the pandemic situation was anxiety inducing, which many recent studies, including "Onboarding during Covid-19: Create Structure, Connect People and Continue Adapting" by Charles Scott, have proven has lead to students struggling with motivation towards their studies. The university did however regularly update students with advice on coping throughout these troubling times.
 
-Ultimately, this project was not majorly influenced by the global pandemic, as the software tool could be built and evaluated using my own technology. Perhaps things may have been done slightly differently, perhaps evaluating the product using colleagues own code, or using interviews to help evaluate the priorities associated with building said translator. Either way, the global pandemic should be noted in this thesis.
+Ultimately, this project was not majorly influenced by the global pandemic, as the software tool could be built and evaluated without external tools supplied by the university. In general however, opportunities were restricted, making the likes of interviews very difficult to be carried out.
 
 \section{Problem Space}
 \subsection{Java and Python}
 
 The decision to focus on a translator between Java and Python ultimately came from the fact that these are the two most prevalent programming languages in the Computing Science course at University of Glasgow. However there is strong justification for this language choice due to their relevance.
 
+\subsubsection{Python}
 Python is a highly popular language for a number of reasons, most notably it is easy to read and write, it is an interpreted language, it is dynamically typed, and it possesses a rich base library and garbage collection feature. (https://python.land/python-tutorial/what-is-python) A paper by Fangohr detailed a comparison carried out between C, MATLAB and Python as teaching languages in engineering. This paper heavily supports that python has an easy-to-use syntax and highlights that python is here to stay in industry, due to it's intuitive nature. A paper titled "An Empirical Comparison of Seven Programming Languages" also mapped the advantages of python performance-wise using empirical data, as it performed amongst the best when put up against 6 other well known programming languages. This evidence of both strong performance and syntactical-ease are enough to justify the importance of Python, thus the decision to use it as the target language for the programming language translator was clear.
 
+
+\subsubsection{Java}
 According to Oracle, 3 billion devices run on Java. This proves it's popularity, probably due to it's many advantageous factors. One major factor being the embrace of object-oriented programming (OOP) in contrast to the procedural programming approach associated with a lot of other languages. Other advantages include Java's platform-independency, it's support for a plethora of libraries being appealing to enterprise computing and Java's support for common programming key issues such as multi-threading and automatic memory management. 
+
+\subsubsection{Translation from Java to Python}
 Object-Oriented Programming is at the core of all Java programs, which is untrue for Python, despite having OOP capabilities. Java is restrictive and complex to design in comparison to the intuitive nature of python. Java is also statically typed (meaning that a variable's type must be defined), whilst Python is dynamically typed.
 
 Evidently both Python and Java are powerful and popular for a reason, justifying their place as two of the top languages in the programming world. The differences that have also been highlighted are areas which will make the translation process interesting and justifies that there is enough of a difference between the two languages to make a translation tool worthwhile.
 
+Further justification could come from the legal battle currently ongoing between Oracle (owners of Java) and Google. Oracle want a share of the money Google have made from Android, somewhere in the region of a billion US dollars, because of the several Java APIs that have been re-implemented into Android. This battle has been ongoing for 10 years, with both sides of the debate spending several millions of dollars to fight their case. If Oracle were to win this legal battle, it will likely deter businesses from using Java in the future and they may rush to change the programming language they operate in completely. Python would be one of the obvious alternatives due to it's recent popularity.
+
 \section{Motivation}
-Whilst it is not believed that Python will replace Java, given the benefit of some python features highlighted in section 1.2.1, there is definitely an existing argument as to why people may choose to code in python. Aside from this, Python is also closely related to newly emerging fields in computing science such as the Internet of Things (IoT).
+Whilst it is not believed that Python will replace Java, given the benefit of some python features highlighted in section 1.2, there is definitely an existing argument as to why people may choose to code in python. Aside from this, Python is also closely related to newly emerging fields in computing science such as the Internet of Things (IoT).
 
 In a 2019 article it was suggested by TIOBE that Python could overtake both Java and C to become the most popular programming language in the world. This was due to the "software engineering boom" which attracted newcomers to programming. To understand a simple program such as "hello world" a java user must understand classes, static methods and packages, whilst a C user is required to understand explicit memory management. A Python user however, simply must understand one single line.
 The article goes on to explain how Python is widely regarded the first programming language taught to university students, however not only due to it's simple high-level syntax. It is due to Python being the number one language in a number of different computing domains such as statistical, AI programming, scripting, system tests, web programming and scientific computing.
 
 Figure \ref{fig:index} shows the TIOBE Programming Community index from February 2021. This index is used as indicator of the popularity of programming languages. The ratings use popular search engines to calculate the ratings, and is based on the number of skilled engineers world-wide, courses and third-party vendors. The graphic clearly indicates the rise of Python and relative fall from Java (Despite still being number 2 in the overall rankings). This evidence benefits what was stated in the 2019 article about Python's rise in the next few years.
 
-This evidence combined makes Python a strong candidate to soon dominate the software market. This in turn could create the shift in many different industries from their current software (in a lot of cases a Java software) to one operated in Python. This could become a tedious job, and rewriting software in a new language from scratch would be both time consuming and expensive. Therefore, a mechanism that converts Java (a vastly popular programming language that is starting to wane) to Python (a language which is massively increasing in popularity) relatively accurately and automatically, could be imperative in the software development world in the near future. 
+This evidence combined makes Python a strong candidate to soon dominate the software market. This in turn could create the shift in many different industries from their current software (in a lot of cases a Java software) to one operated in Python. This could become a tedious job, and rewriting software in a new language from scratch would be both time consuming and expensive. Therefore, a mechanism that converts Java (a vastly popular programming language that is starting to wane) to Python (a language which is massively increasing in popularity) relatively accurately and automatically, could be imperative in the software development world in the near future.
 
 \begin{figure}[htb]
     \centering
@@ -154,6 +172,8 @@ This evidence combined makes Python a strong candidate to soon dominate the soft
     }
     \label{fig:index} 
 \end{figure}
+
+A paper titles "Python - The Fastest Growing Programming Language" is further evidence for a move to Python. The paper details the many benefits of Python, which have roughly been covered in this paper already. It then goes on to discuss how being able to code in Python is now a more in-demand skill than ever, stating that in terms of search volume, learning Python is the \#1 search when compared to other programming languages. On top of this, Python is an open-source project, with a moderate update cycle, with new versions coming out about once a year. This allows Python to stay relevant which cannot be said about certain other popular languages, with Java updates less regular and significant, and C updates being non-existent.
 
 \section{Research Questions}
 As briefly summarised in section 1.3, the overall goal was to try and create a tool which would convert a program written in Java to Python, without compromising accuracy or code quality. Aside from this overall goal, objectives were set out which were altered as the project went on to fit with what had been achieved. 
@@ -201,9 +221,18 @@ For Objective \textbf{\#4}, I did not want to make translation overly complicate
 
 \section{Contributions}
 
-\section{Structure of Paper}
+\subsection{What has been Learnt}
 
-\subsection{Methodology Summary}
+Programming translation is a topic that on the surface seems relatively straight forward. This project taught the true hardship behind creating a powerful programming language converter, and where issues can occur. It was also an eye opener to some of the great frameworks available and the research into the project which made the future of programming language translation seem somewhat more reachable. It also taugh a lot about how a translator should be evaluated and tested, and at what point the tool can be considered effective.
+
+\subsection{Technologies}
+As previously mentioned, ANTLR and StringTemplate were the primary frameworks used for this translator. This is a credit to Terence Parr, a Computer Science professor from the University of San Francisco. His development on language translation tools has been ongoing since 1989, and without his efforts it is likely this project would not have been as successful.
+Terence Parr also wrote the article on using ANTLR with StringTemplate, which was very handy in helping with the understanding of connecting the two technologies.
+The Java Grammar file used in this project was also taken from the ANTLR github repository and adapted, but without it, the creation of the Java grammar file may have taken a lot longer.
+
+Credit also has to go to Java2Python, as it was helpful in indicating the principles of programming languages that should be focused on. It was also used partially to test the tool that was created, and so without it's test cases, it would have been time consuming to evaluate our translator.
+
+\section{Methodology Summary}
 To create this tool I first of all researched the current market of programming language translators. Inspiration from these tools was taken, however they were also criticized for what they lacked, and what could have been improved upon.
 This helped lead to the design process, as the criteria was able to be laid down for exactly what was required of the translator.
 Once the functional requirements were laid out, research was undertaken to identify what software was available on the market which would offer this functionality. 
@@ -211,10 +240,10 @@ Once ANTLR and StringTemplate were identified as reaching these requirements, Gi
 Once this code was found, and I was familiar with how the software worked, I used this existing code to try and extend it to a translator.
 Evaluation was ongoing as I created the tool to ensure the objectives were stuck to closely.
 
-\subsection{What I have built}
-I have built a programming language translator tool using Java, and ANTLR and StringTemplate frameworks, which is able to translate from Java to Python. The tool is able to translate the majority of Java's in-built functionality to Python in the most minimalist form, so as not to confuse things and means the code is maintainable in the future. The way in which this tool has been built uses a Java Grammar from ANTLR's GitHub repository which I have extended slightly to add some functionality, and a StringTemplate file which was influenced by the StringTemplate GitHub however was primarily built from scratch. This technique of building was chosen due to it's extendability in the future, as this thesis will demonstrate how easily the tool could be expanded in future.
+\section{What has been built}
+A programming language translator tool has been built, using Java, ANTLR, and StringTemplate frameworks, which is able to translate from Java to Python. The tool is able to translate the majority of Java's in-built functionality to Python in the most minimalist form, so as not to confuse things and means the code is maintainable in the future. The way in which this tool has been built uses a Java Grammar from ANTLR's GitHub repository which I have extended slightly to add some functionality, and a StringTemplate file which was influenced by the StringTemplate GitHub however was primarily built from scratch. This technique of building was chosen due to it's extendability in the future, as this thesis will demonstrate how easily the tool could be expanded in future.
 
-\subsection{Thesis Outline}
+\section{Thesis Outline}
 The rest of this paper is structured as follows:
 Chapter 2 analyses and critiques the current research in this field, and the current products on the market.
 Chapter 3 is a general summary of the method used to decide upon the criteria of the tool and it's evaluation.
