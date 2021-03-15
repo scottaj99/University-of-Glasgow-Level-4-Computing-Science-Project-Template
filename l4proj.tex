@@ -363,7 +363,110 @@ What did other people do, and how is it relevant to what you want to do?
 
 %==================================================================================================================================
 \chapter{Analysis/Requirements}
-What is the problem that you want to solve, and how did you arrive at it?
+
+\section{Findings from Background Research}
+The background research was imperative in working out the scope of this projects requirements. So far, it had became clear that an intermediate layer is an incredibly useful feature of a translator as seen in both "JPT: A Simple Java-Python Translator" and "Code Migration Through Transformation: An Experience Report". It had also been made clear through " The Realities of Language Conversions" that it would be no easy task, and so expectations had to be realistic. Whilst this tool should be valuable and useful, it is unrealistic for this tool to offer a perfect translation from Java to Python by the end of the project.
+
+\section{The Programming Language Translation Market}
+The next step was to explore the market for programming language translators to see what was available, and to analyse and critique them to try and explore what they do well, and what could be bettered.
+
+I dedicated my search for programming language translators primarily between Java and Python. Going from Python to Java there was a total lack of available translators. Relating this back to research and common knowledge, it became clear that this is because people are generally migrating towards Python, not away from it. Translating from Python to Java was a potential aim for this tool, however this was justification enough to suggest that is was not really a requirement due to its lack of demand.
+
+There was a popular tool named Jython, which was a Java implementation of Python, which essentially allowed Python source code to be ran within a Java implementation. This is a useful tool that could solve certain issues in the programming world such as increasing programmer productivity (since Python programs are generally 2-10x shorter than the equivalent Java program). However, this tool was slightly outside the scope of this project, since we primarily aimed to give a syntactical translation from Java to Python, not just a tool to interpret python code in a Java application. 
+
+\subsection{Java2Python Analysis and Critique}
+Java2Python (J2Py) is the tool that best matched the tool that I was after. J2Py takes Java source code and translates it into Python source code, which is essentially exactly what this project's primary objective is. 
+
+Java2Python was created by a gitHub user named Troy Melhase, who claims he created the tool because he needed a Java Package to run on the CPython Interpreter and that he got tired of porting the code by hand. The Introduction file on gitHub explains that j2py can be useful for a one-time port of a Java project to python, as it can save a lot of time and effort by taking the migration relatively far very fast. It is also said to be useful if you've got a Java project and you'd like to keep it up to date. The translator is "customizable" to help in this area. The introduction file also claims it won't be useful if you expect the python code to run correctly first time after translation, and it won't convert Java sources at runtime. This is because the tool is too limited for such different platforms. This is good as the tool does not overstate it's scope, and the stated end product is roughly where this project is aiming. 
+
+To try and work out how good the product truly was, the output from the test source code provided by J2Py was examined. First of all, A "Hello, World!" program, whick is well regarded in the programming world as the most basic of programs, to illustrate basic syntax. This java source code can be shown in figure \ref{fig:helloWorldJava}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{images/helloWorldJava.JPG}
+        \caption{Java Implementation of "Hello, World!" Program
+    }
+    \label{fig:helloWorldJava} 
+\end{figure}
+
+When put into the j2py Translator, the Python source code in figure \ref{fig:helloWorldJ2py} was given.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{images/helloWorldJ2py.JPG}
+        \caption{J2py python source code output from figure \ref{fig:helloWorldJava} input
+    }
+    \label{fig:helloWorldJ2py} 
+\end{figure}
+
+Whilst this output is accurate and will produce the desired output when ran on a python compiler, it is also ridiculously long winded. The simplest "Hello, World!" program in Python would require just one line: print("Hello, World!"). This is because python does not require the class and method declaration that Java does, since it does not enforce OOP. If OOP was to be enforced however, which is good practice, the output could still look as simple as figure \ref{fig:helloWorldPy}:
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{images/helloWorldPy.JPG}
+        \caption{Simplest OOP form of the "Hello, World!" Python Program
+    }
+    \label{fig:helloWorldPy} 
+\end{figure}
+
+This is the simplest example of how it was decided that J2Py's translations were overly confusing and wordy, and turned the simplest example of code into several lines, many of which were futile. One of the core principles of coding is that code should not be verbose, and if this example of simple code turned 3 lines of code into 9 lines, you can assume that with longer code scripts, the amount of excess code will grow further, making the translations more difficult to comprehend.
+
+Another issue with J2Py is the fact that it was built for Python version 2.7, as stated on their gitHub repository documentation. The Java2Python download instructions on their gitHub give directions on how to install Java2Python version 0.5.1, which is the version that was initially used for testing. Within their configuration file (used to give the python translation), the print command did not have parentheses around the statement being printed. This meant technically that any translated code that had print commands in them, could not be compiled in python3. Given that we are now on python version 3.9, this makes the configuration file outdated. Whilst it was a relatively simple change to make, someone who is not used to working in programming may have struggled to make the changes that were required in the configuration file, meaning they would have to manually go back and add parentheses to their print statements which would be time consuming, especially in longer translated code.
+
+Another criticism I had of Java2Python was it's lack of extendibility. Java2Python does a great job of offering translations of a bunch of simple/standard coding paradigms, however if using j2py for a certain task, the option of adding a translation, or even altering a translation to fit with the intended output, is desirable. J2Py does offer customization in the form of a command line alteration, however it is difficult to understand how to use that effectively, or how to add a new coding paradigm altogether. A more desirable feature would have been a template engine which is easier for user to understand, alter, and extend.
+
+One final thing I would mention about J2Py is its efforts to translate imports. Although this is very difficult since Java and python will not share a lot of mutual libraries, J2Py makes no effort to translate Java packages to Python. This would be a cool feature if possible, which over time if added to effectively, could make the tool far more powerful.
+
+\section{Requirements}
+Given what was found from the background reading and the deep dive into the Java2Python the requirements of the project were shaped accordingly. There was now a general consensus on how the tool should be built, with certain design ideas in mind as well as a realistic end goal in mind.
+
+\subsection{Minimum Viable Product}
+The minimum viable product (MVP) is the absolute minimum requirement for the project to be able to achieve before it can be considered a success. For this I would refer back to a couple of the objectives mentioned in section 1.4 of the Introduction. Firstly the translator should be able to translate simple/common coding paradigms, which were defined as follows:
+\begin{itemize}
+    \item
+    Conditional statements in the form of if/else/ else if as well as logical conditions using mathematical symbols (e.g 'a>'b, 'a<b', 'a==b').
+    \item
+    Switch statements, which are a form of conditional statement to select a block of code that executes if a case is met (switch/case/default)
+    \item
+    While loops, and do/while loops where a block of code will be executed as long as a specified condition is reached.
+    \item
+    For loops, where the number of times code will be looped is specified, rather than a condition waiting to be met. Also for-each loops can be used when looping through elements in a list-type structure such as an array.
+\end{itemize}
+
+Since this would technically be nothing new, since j2py already has these capabilities, the second objective should also be considered for the MVP: to ensure the code is expandable for future work. This would mean even if the MVP did not surpass the capabilities of other translators, it had the capabilities to be added to with an intuitive design. Additionally, with reference to the forth objective, the translation should be as simplified as possible. This means that if it was to only be the simplest paradigms as listed above, they would all be translated into the simplest form.
+
+\subsection{Next Level of Requirements}
+This section describes what should be prioritised once the MVP has been implemented.
+
+\subsubsection{Translation Capabilities} In an ideal world, this tool would be able to translated every Java source code script to Python source code with 100\% accuracy. Given what is known about language translation however, the next step after MVP would be to have the whole unimplemented Java grammar translatable to Python. By this, we mean the full syntax of Java would be translatable outwith syntax that can be added from imported libraries. For a brief overview, this would involve classes, methods, interfaces, try/catch statements, clauses, enumeration and annotations.
+
+\subsubsection{Accessibility}
+The language translator has to be simple enough to use, since it's primary function is making code migration easier. One feature of j2py which was admirable was it's simple command line input. This was something held in relatively high priority for this translator, as it was decided a user interface was not particularly required, but that shouldn't mean a list of confusing commands were required, otherwise it could get confusing for the user. Instead the command line input should be simple and intuitive.
+
+\subsubsection{Explanation of Failure}
+Due to the inevitability of translations occasionally failing, this tool should be able to offer an explanation as to where translation has failed. This could be done as simply as replacing the translated line with internal commentary. This means that the user knows what has to be translated manually and where.
+
+\subsubsection{Enforcing OOP}
+Whilst python code does not always have to be in OOP form, it is often good coding practice to do so. Ideally, the code should keep a similar structure to the java file in terms of classes and methods as this will make it easier to understand how stuff has been translated.
+
+\subsection{Desirable Features}
+This section describes features of the translator which may be slightly outwith the scope of this project but would be ideal features to be available in this tool.
+\subsubsection{Dealing with Imports}
+The possibility of doing this with any form of accuracy is low since Python and Java's imported packages are so different, however if possible it would be very effective if the packages the Java script imports could be mapped to the same or a similar package in Python with the same features. Focus would be on mathematical and statistical packages as they are the most commonly utilised packages in either language.
+
+\subsubsection{Coding Style Transformation}
+This is a feature which may not be too difficult to implement however is far from a requirement. There are a lot of stylistic differences between how people prefer to code in Java and Python. One example of this is Java users tend to prefer camelCase naming style, while Python prefer to use underscoring. For example, a variable titled 'firstName' in java would usually be titled 'first\_name' if titled by a Python developer. Using the standard style of a programming language can often be useful but generally is not that import and so is a low priority feature.
+
+\subsubsection{Reverse Translation}
+One feature which may be very helpful is reverse translation so that the tool can also translate from Python to Java. With the research done into translation however it would appear this is twice as much work. This is because that would involve defining two different grammars which can be very time consuming and then defining the targeted output in Java. There are also issues when translating from Python to Java such as variable typing, and visibility modifiers.
+
+\subsubsection{Other Languages}
+The possibility to translate from Java to another target language is also a desirable feature of this translation tool. Given the time and resource constraint, it was easiest to focus on ensuring the translation from Java to Python was effective and accurate. However the insertion of another target language would make this tool very powerful, but is slightly beyond the realm of possibility.
+
+
+
+
+\todo{What is the problem that you want to solve, and how did you arrive at it?}
 \section{Guidance}
 Make it clear how you derived the constrained form of your problem via a clear and logical process. 
 
