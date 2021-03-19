@@ -480,7 +480,54 @@ sensibly narrowed down to what you have done.
 
 %==================================================================================================================================
 \chapter{Design}
-How is this problem to be approached, without reference to specific implementation details? 
+This project used iterative design processes when developing the translation tool. This meant implementing small sections of the tool, testing, and then going back to the design phase should limitations occur. It was imperative that the limitations of the technology choices were known early in implementation as it was time consuming to build a full system and so testing the capabilities early on was vital. This chapter will describe the agreed upon final design of the translator which was chosen after some trial and error with implementation, however due to the fail-fast nature of this project, the tool was designed in one main iteration. There will be a section for each design decision that was made in regard to the translation tool. This will be structured from the start of the user's translation process to the end of the translator process. Any design decisions that are unclear will most likely be justified when the technologies are described in more detail in chapter 5, the implementation phase.
+
+\section{Translation Entry Point}
+As mentioned in the requirements chapter, to use a translator, an interface is not necessary; a command line instruction is sufficient. The design of the command line instruction should be as simple yet informative as possible. The surrounding code was arbitrary dependent on the chosen technology for implementation, but some input material was crucial. 
+
+Firstly, the input should include the title of the java source code being translated. The fact the instruction takes place on a command line means this syntax can be used to navigate to the desired file, using slashes and ellipses to navigate between directories. 
+
+Secondly, the input should include the desired output language. Although the primary intention of this project was to translate to Python, in the interest of making the translator expandable, this is a good feature. If in future, the translator was to be able to translate to another programming language, you could insert a different target language here instead of Python. This input is not required however, and if left blank, the translator will assume Python is the target.
+
+Third and finally, the input should include the destination for the translated code. If given, the output of the translation will be wrote to the given file. This file does not need to exist prior to the translation process. if a destination file is not given, the translation will just be output in the terminal window. If the destination file is given with a python extention i.e "output.py" then it will be executable, otherwise it will just be a standard text file.
+
+This means that the only \textbf{required} input is the input source code, and that any of the following inputs would be permitted:
+
+\textbf{input.java python output.py}
+
+\textbf{input.java python}
+
+\textbf{input.java output.py}
+
+\textbf{input.java}
+
+\section{Input Processing}
+
+The design for processing the input involved two processes called lexical analysis and parsing. The translator has a Java grammar file which maps out the parser and lexer rules to give meaning to the java source code being processed. The general idea is that the lexer will scan the input and tokenize it, breaking the input into smaller objects and giving these objects meaning. The parser will then scan through these 'tokens' and produce the 'parsing result'. A good example of how a parser and lexer work is given below, sourced at 'A Guide to Parsing: Algorithms and Terminology'.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{images/parserLexer.png}
+        \caption{Example of how lexical analysis and parsing work. From 'A Guide to Parsing: Algorithms and Terminology'
+    }
+    \label{fig:parserLexer} 
+\end{figure}
+
+From this example, the lexer is able to recognise that '437' and '734' are tokens of type NUM and '+' is a token of type PLUS. This would be defined in the grammar file as a lexer rule.
+The parser is then able to recognise that if those three tokens appear in that order then a sum expression is being displayed. This would be defined as a parser rule in the grammar file.
+Parsers often produce abstract syntax trees, like the one shown in \ref{fig:parserLexer} to represent the syntactical structure of the source code. This is how the Java source code input to the translator is processed.
+
+\section{Output Processing}
+To output the Python source code, the results from the parser are used, along side a template engine. Once the abstract syntax tree has been built from the input stage, the expressions and their relevant tokens will be mapped to template rules, taking the tokens as parameters. The template engine technology was a choice made due to the extendibility objective, as the technology made it far easier to customize and add to the output, which was a criticism of the J2Py translator. More information of how and why this was easier will be given in the implementation chapter. As mentioned in the analysis and Requirements chapter, an intermediate layer seemed necessary for a programming language translator tool. Since the template engine output layer is able to interact directly with the parsing result, an intermediate-layer only really exists in the form of the abstract syntax tree produced from the lexical analysis and parsing of the Java source code, using the Java grammar file.
+
+\section{Presenting Output}
+As briefly mentioned in section 4.1, once the translation has been complete, it will display in the terminal window. It will also be written to a file if specified in the initial command request. One consideration for the tool to take it one step further was to compile the output to see if the python code can run. The tool does not do this however for a number of reasons. Firstly, the technology choices made this particularly difficult, but this will be discussed in the implementation chapter. On top of this, the primary aim for this tool was to produce some form of syntactical translation from Java to Python, and so syntax was prioritised over correctness. This means the tool is by no means guaranteeing working python source code, but is instead guaranteeing something to work with in the form of a syntactical translation. 
+
+
+
+
+
+\todo{How is this problem to be approached, without reference to specific implementation details?} 
 \section{Guidance}
 Design should cover the abstract design in such a way that someone else might be able to do what you did, 
 but with a different language or library or tool. This might include overall system architecture diagrams,
