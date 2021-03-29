@@ -701,10 +701,129 @@ The majority of this translation is quite self explanatory; the elif statements 
 The way the Java grammar defines a lot of code patterns is into several different parts. For this example, the switch statement is broken into switchStatement, switchBlockStatementGroups, switchBlockStatementGroup, and switchLabel. The switchStatement encapsulates the whole switch block of code. The switchBlockStatementGroups is all of the switchBlockStatementGroup objects grouped together. The switchBlockStatement group encapsulates each block from the switchLabel to the end of that chunk of code, usually the break keyword. The switchLabel is either the case or the default keyword in Java, meaning it is either elif or else in the Python translation. 
 Because of this fragmentation, certain parameters are not accessible from the template method. For example, switchVal has to be definied, because the switchBlockStatement group has no access to the name of the variable that is being compared. There also has to be an empty if statement at the start of the block, as it is impossible to tell using stringTemplate which is the first switchBlockStatementGroup, and so all of them have to have their switchLabel set to the elif keyword.
 
-\subsection{the for loop (example of making syntax easier)}
+\subsection{the For-Loop}
+The for-loop is an example of altering the stringTemplate to make the Python source code that was outputted from the translator as simple as possible. There are two types of for-loop, for the purpose of this project we called them the normalForLoop and the enhancedForLoop. 
+The enhancedForLoop translation is relatively simple to go from Java to Python as can be seen from fig \ref{fig:enhancedForJava} and \ref{fig:enhancedForPython} below.
+
+\begin{figure}[htb] 
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/enhancedForJava.JPG}
+        \caption{Enhanced for loop in Java}
+        \label{fig:enhancedForJava}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/enhancedForPython.JPG}
+        \caption{Enhanced for in Python}
+        \label{fig:enhancedForPython}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)    
+    \caption{Enhanced For Loop Examples
+    }\label{fig:enhancedFor}
+\end{figure}
+
+The normalForLoop however is a lot more complicated. To explain the issue with this translation, we will first of all look at a Java example in figure \ref{fig:normalForJava}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{images/normalForJava.JPG}
+        \caption{Example of a normal for loop in java
+    }
+    \label{fig:normalForJava} 
+\end{figure}.
+
+To explain, the first part of the parenthesized expression in for declares the integer variable j, with value 0. The next part of the this expression is stating that whilst j is less than 10, the loop should run. The final part of this expression states that j should add 1 to it's current value at each iteration of the loop.
+This is relatively simple syntax in Java, however when we wanted to translate this source code into Python we opted to translate it into a while loop rather than using the for loop implementation used in Python. This was for two main reasons: Firstly, similar to the issues faced in the switch case, the stringTemplate cannot break down certain tokens enough to implement the Python version of this loop. Secondly, and most importantly however, the while loop behaviour is identical and a lot less confusing than the for loop. For context, here are the two ways the code in\ref{fig:normalForJava} could have been translated into Python:
+\begin{figure}[htb] 
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/normalForWhile.JPG}
+        \caption{Python translation using while method}
+        \label{fig:normalForWhile}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/normalForFor.JPG}
+        \caption{Python translation using for method}
+        \label{fig:normalForFor}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)    
+    \caption{Python translation examples of the for loop
+    }\label{fig:normalForPython}
+\end{figure}
+
+While both implementations look relatively simple, we opted for \ref{fig:normalForWhile} for a few reasons. Firstly, we were unable to abstract just the numbers 0,10 and 1 from the original source code without causing errors for other translations in the stringTemplate. For example if we changed the initialisation tab "int j = 0" to just say "0", it could be plugged into this for-loop but may mess up other areas of code where an integer variable is initialised.
+Secondly, one of our objectives was to make translations as clear as possible. The while loop implementation is easy to understand what is going on, as the code almost offers an explanation as to how it behaves. The for/range implementation on the other hand is quite confusing. If you are unaware as to what some of the numbers mean in the parenthesis, you could struggle to read that code and understand the programs behaviour. It benefits the python output's readability to make the for-loop translate in this way.
+This is one of many examples where the translation's output has been altered to try and benefit the user.
+
+\subsection{Dealing with Imports}
+Import libraries massively vary between Java and Python. For this reason, unfortuantely we were unable to map import packages, however we had to find some way to deal with them. In order to do this, we changed the Java Imports to the form of a python import. For example, if the Java import displayed as:
+
+\textbf{import math.*;}
+
+it would display in the python output as:
+
+\textbf{from math import *}
+
+Unfortunately, unless the name of the packages are identical, this method will not be very effective, and for this reason, once the imports were translated, they were commented out with a message explaining why:
+
+\textbf{#import line commented out due to uncertainty}
+
+Given more time however, we had an effective plan on how Java packages could have been partially mapped from Java to Python. Figure \ref{fig:primitiveTypes} shows how primitive types in Java are mapped to primitive types in Python in the Java.g grammar file.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{images/primitiveTypes.JPG}
+        \caption{primitiveTypes in the java Grammar
+    }
+    \label{fig:primitiveTypes} 
+\end{figure}.
+
+If the type is boolean for example, a stringTemplate operation titled bool() is called, and will output the type in Python. For packages, we could have a similar mapping. This means that if a recognises Java package was Parsed, it could call the stringTemplate operation which would output the most similar package in Python. The syntax would look something like what is is displayed in \ref{fig:imports}
+\begin{figure}[htb] 
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/importGrammar.JPG}
+        \caption{How the Java grammar file would look}
+        \label{fig:importGrammar}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/importTemplate.JPG}
+        \caption{How the stringTemplate would look}
+        \label{fig:importTemplate}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)    
+    \caption{How the import mapping would look in the grammar and stringTemplate files
+    }\label{fig:imports}
+\end{figure}
+
+Unfortunately, we were unable to fully implement this however it is a concept we are confident could be made possible in future work.
+
 
 \section{Output}
-\section{Walkthrough of example (from source code, through grammar, showing string template, showing output)}
+Implementation of outputting the Python source code was made relatively simple due to the cminus example discussed earlier. Within that file there was the Main.java program which powered the translation. This did not require much altering. The only part of this Main.java file that eas altered was that we added the ability to output the Python code to a specified file. This meant that as soon as translation had ran, it was possible for users to take their results and put them straight into a python compiler if they wanted to, provided they specified an output wile with the .py extention. The whole command line term is as follows:
+
+\textbf{java Main <template> <java source code> <output file>}
+
+The java and Main part are relatively self explanatory; java is the language the main file is built in and so is required to run the file. "Main" is the title of the program which runs the translation hence it has to be executed. Template, java source code, and output file are the only thing the user has to input. Template refers to what language the user wants to translate to, this will be defaulted to Python if the user does not include this input, and this is the only template option at the moment. This is a good feature though, because if in the future the ability to translate to C# is added, then it is simple enough to specify in the command line. The java source code is what the user wants to translate; the input Java source code. Users can use regular command line expressions such as "../" and "./" to navigate to the requested input file. This is the only input to the translator that is vital. The output file does not have to specified, as the resulting python code will always be displayed in the terminal window. If it is however the translated Python code will be put into a file with the specified name in the specified location.
+
+Figure \ref{fig:terminal} shows how the terminal window will look after a translation, and shows the command that would be used to achieve said output.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{images/terminal.JPG}
+        \caption{Terminal Window displaying the command and the output for translating the forLoop
+    }
+    \label{fig:terminal} 
+\end{figure}.
 
 
 
